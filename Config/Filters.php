@@ -24,6 +24,7 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'authcheck'=> \App\Filters\AuthCheckFilter::class,
+        'AdminCheck'=> \App\Filters\AdminCheck::class,
     ];
 
     /**

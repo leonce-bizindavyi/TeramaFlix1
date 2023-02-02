@@ -7,21 +7,24 @@ use App\Models\PostModel;
 use App\Models\UtilisateurModel;
 use App\Models\GenreModel;
 use App\Models\CategorieModel;
+use App\Models\SuscribeModel;
 use App\Libraries\hash;
 use CodeIgniter\HTTP\Request;
 
 class PostController extends BaseController
 {
-    public $categorieModel;
-    public $genreModel;
-    public $user;
-    public $userModel;
+    // public $categorieModel;
+    // public $category;
+    // public $genreModel;
+    // public $gender;
+    // public $user;
+    // public $userModel;
     public function __construct(){
-        $this->genreModel=new GenreModel();
-        $this->categorieModel=new CategorieModel();
-        $this->userModel=new UtilisateurModel();
-        $user_id=session()->get('loggedUser');
-        $this->user =$this->userModel->getUserInfo($user_id)['ID'];
+        // $this->genreModel=new GenreModel();
+        // $this->categorieModel=new CategorieModel();
+        // $this->userModel=new UtilisateurModel();
+        //$user_id=session()->get('loggedUser');
+        // $this->user =$this->userModel->getUserInfo($user_id)['ID'];
     }
     public function index()
     {
@@ -34,11 +37,18 @@ class PostController extends BaseController
     
     //handle new post add jax request
     public function add(){
+        $genreModel=new GenreModel();
+        $categorieModel=new CategorieModel();
+        $userModel=new UtilisateurModel();
+        $user_id=session()->get('loggedUser');
+        $user =$userModel->getUserInfo($user_id)['ID'];
         $genre = $this->request->getPost('Genre');
-        $genre = $this->genreModel->GenreName($genre)->ID;
+        $gender=$genreModel->GenreName($genre);
         $categorie = $this->request->getPost('Categorie');
-        $categorie = $this->categorieModel->CategorieName($categorie)->ID;
-        $user = $this->user;
+        $category = $categorieModel->CategorieName($categorie)->ID;
+        $userResult = $user;
+        $categorieResult=$category;
+        $genreResult=$gender;
         $file = $this->request->getFile('myfile');
         $imge = $this->request->getFile('file');
         $filename = $file->getRandomName();
@@ -47,13 +57,13 @@ class PostController extends BaseController
             'Title' => $this->request->getPost('title'),
             'Image' => $imagename,
             'Video' => $filename,
-            'Categorie' => $categorie,
+            'Categorie' => $categorieResult,
             'Body' => $this->request->getPost('body'),
-            'User'=> $user,
-            'Genre'=> $genre,
+            'User'=> $userResult,
+            'Genre'=> $genreResult,
             'Visible'=> true
         ];
-        $postModel = new \App\Models\PostModel();
+        $postModel = new PostModel();
         $postModel->insert($data); 
         $file->move('Videos', $filename);
         $imge->move('Thumbnails',$imagename); 
@@ -65,7 +75,11 @@ class PostController extends BaseController
     //handle fecth all post ajax request
     public function fetch(){
         $con = \config\Database::connect();
-        $post = $con->query("select * from video where User=".$this->user);
+        $userModel=new UtilisateurModel();
+        $user_id=session()->get('loggedUser');
+        $user =$userModel->getUserInfo($user_id)['ID'];
+        $userResult = $user;
+        $post = $con->query("select * from video where User=".$userResult);
         $post = $post->getResult();
         $data = '';
         if($post){
@@ -116,12 +130,14 @@ class PostController extends BaseController
         ]);
     }
     //hundle update post ajax request
-    public function update(){
+    public function update(){    
+        $genreModel=new GenreModel();
+        $categorieModel=new CategorieModel();
         $id = $this->request->getPost('id');
         $genre = $this->request->getPost('Genre');
-        $genre = $this->genreModel->GenreName($genre)->ID;
+        $genre = $genreModel->GenreName($genre)->ID;
         $categorie = $this->request->getPost('Categorie');
-        $categorie = $this->categorieModel->CategorieName($categorie)->ID;
+        $categorie = $categorieModel->CategorieName($categorie)->ID;
         $old_thumb = $this->request->getPost('old_image');
         $file = $this->request->getFile('file');
         $fileName = $file->getFilename();
@@ -174,6 +190,43 @@ class PostController extends BaseController
         return $this->response->setJSON([
             'error'=>false,
             'message'=>$post
+        ]);
+    }
+    public function abonne()
+    {
+        $aboneModel = new SuscribeModel();
+        $user = $this->request->getPost('user');
+        $user_id=session()->get('loggedUser');
+        if($aboneModel->isAbonne($user,$user_id)){
+            $id = $aboneModel->isAbonne($user,$user_id)->ID;
+            $aboneModel->delete($id);
+            $resul = 0;
+        }else{
+            $data = [
+                'User'=>$user,
+                'Subscriber'=>$user_id
+            ];
+            $aboneModel->insert($data);
+            $resul = 1;
+        }
+        return $this->response->setJSON([
+            'error'=>false,
+            'message'=>$resul
+        ]);
+    }
+    public function abonneCheck()
+    {
+        $aboneModel = new SuscribeModel();
+        $user = $this->request->getPost('user');
+        $user_id=session()->get('loggedUser');
+        if($aboneModel->isAbonne($user,$user_id)){
+            $resul = 1;
+        }else{
+            $resul = 0;
+        }
+        return $this->response->setJSON([
+            'error'=>false,
+            'message'=>$resul
         ]);
     }
 }

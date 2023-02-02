@@ -12,7 +12,21 @@
                 </a>
                 <div class="flex flex-col">
                     <div><h1 class="text-xl"><?= $video->Title?> </h1></div>
-                    <div class="nbrVues "><?=$video->Views?> vues <?=$video->Created_at?></div> <br>
+                    <div class="nbrVues "><?=$video->Views?> vues
+                    <?php 
+                        $datetime1 = new DateTime(date('Y-m-d H:i:s'));
+                        $datetime2 = new DateTime($video->Created_at);
+                        $difference = $datetime1->diff($datetime2);
+                        if($difference->days== 0){
+                        ?>
+                        <?=$video->Created_at?></div> 
+                        <?php
+                        }else{
+                        ?>
+                        <?=$difference->days.' days'?></div> <br>
+                        <?php
+                        }
+                    ?> 
                     <div class="description flex  truncate text-sm">
                         <img src="<?=base_url() ?>/Thumbnails/<?=$video->Photo?>" class="logo w-13 h-12 my-1  rounded-full img-fluid" alt="logo">
                         <p class="para-logo mb-5" ><?= $video->Nom.' '.$video->Prenom?></p>

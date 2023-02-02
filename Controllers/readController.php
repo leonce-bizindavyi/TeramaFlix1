@@ -201,6 +201,8 @@ class readController extends BaseController
         $rs['search'] = $value;
         echo view('Results',$rs); 
     }
+
+
 } 
 
 

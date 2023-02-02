@@ -4,17 +4,17 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class PostModel extends Model
+class MessageModel extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'posts';
+    protected $table            = 'messages';
     protected $primaryKey       = 'ID';
     protected $useAutoIncrement = true;
     protected $insertID         = 0;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['Title','Image','Video','Categorie','Body','User','Genre','Visible'];
+    protected $allowedFields    = ['Body','FromA','ToB','read_mail'];
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
@@ -39,5 +39,12 @@ class PostModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    
+
+    public function firstSms($admin,$user)
+    {
+        $sql= 'select * from messages where (ToB='.$admin.' and FromA='.$user.') or (FromA='.$admin.' and ToB='.$user.')  order by ID ASC';
+        $res = $this->db->query($sql);
+        $res = $res->getResult();
+        return $res;
+    }
 }
