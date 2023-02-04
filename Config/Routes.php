@@ -54,7 +54,6 @@ $routes->post('login', 'Home::Login');
 $routes->post('signup', 'Home::Register');
 $routes->get('registration', 'Home::Registration');
 $routes->get('logout','Home::Logout');
-//$routes->get('dashb', 'PostController::dashboard');
 $routes->group('',['filter'=>'authcheck'],function($routes){
   $routes->get('/', 'Home::dashboard');
   $routes->get('/Watch', 'readController::play');
@@ -63,6 +62,29 @@ $routes->group('',['filter'=>'authcheck'],function($routes){
   $routes->get('/Upload', 'PostController::post');
   $routes->get('post/edit/(:num)', 'PostController::edit/$1');
   $routes->get('post/detail/(:num)', 'PostController::detail/$1');
+  $routes->get('Profile', 'ProfileController::Profile');
+  $routes->post('abonne', 'PostController::abonne');
+  $routes->post('subscribe', 'PostController::abonneCheck');
+  $routes->post('createPage','Home::createPage');
+  $routes->post('editPagePost','Home::editPagePost');
+  $routes->get('createPage','Home::createChannel');
+  $routes->get('editPage','Home::editpage');
+});
+$routes->group('',['filter'=>'AdminCheck'],function($routes){
+  $routes->get('message', 'Dashboard::sms');
+  $routes->post('message/send/sms', 'Dashboard::sendSms');
+  $routes->post('user/search', 'Dashboard::searchSms');
+  $routes->post('/desactive', 'Dashboard::desactivation');
+  $routes->post('/verifyActive', 'Dashboard::verifyActive');
+  $routes->get('/video', 'Dashboard::video');
+  $routes->get('/info_video/(:num)', 'Dashboard::play/$1');
+  $routes->post('post/bloquer', 'Dashboard::bloquer');
+  $routes->post('post/masquer', 'Dashboard::masquer');
+  $routes->post('post/demasquer', 'Dashboard::demasquer');
+  $routes->post('send/message', 'Dashboard::message');
+  $routes->get('dashboard', 'Dashboard::Accueil');
+  $routes->get('users', 'Dashboard::users');
+  $routes->get('/categories', 'Dashboard::Charte');
 });
 /*
  * --------------------------------------------------------------------

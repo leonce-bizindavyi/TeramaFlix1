@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com" ></script>
-    <link rel="stylesheet" href="<?= base_url() ?>/swiper-bundle.min.css">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url() ?>/img/Teramalogo.png">
-    <link rel="stylesheet" href="<?= base_url() ?>/player.css">
+    <link rel="stylesheet" href="<?= base_url() ?>/assets/css/swiper-bundle.min.css">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url() ?>/logo/TeramaFlixpic.png">
+    <link rel="stylesheet" href="<?= base_url() ?>/assets/css/player.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
@@ -120,7 +120,20 @@
                             <div class="">vues</div>
                         </div>
                         <div class="dateSortie  text-black lg:text-base text-[13px]">
-                            sortie le <span class="date lg:text-base text-[13px]"><?= $myVideo->Created_at ?></span>
+                            <?php 
+                              $datetime1 = new DateTime(date('Y-m-d H:i:s'));
+                              $datetime2 = new DateTime($myVideo->Created_at);
+                              $difference = $datetime1->diff($datetime2);
+                              if($difference->days== 0){
+                                ?>
+                                <span class="date lg:text-base text-[13px]"><?= $myVideo->Created_at ?></span>
+                                <?php
+                              }else{
+                                ?>
+                                <span class="date lg:text-base text-[13px]"><?= $difference->days.' days' ?></span>
+                                <?php
+                              }
+                            ?>
                         </div>
                        </div>
                        <div class="reaction flex flex-row justify-between">
@@ -153,8 +166,8 @@
                     </div>
                 </div>
                 <div class="profil  flex flex-row justify-between lg:px-0 px-[3%] items-center ">
+                  <a href="<?= base_url()?>/Profile?channel=<?= $myVideo->User ?>">
                     <div class="profilChannel  flex justify-start items-center space-x-2  cursor-pointer ">
-
                       <?php  if ($myVideo->Photo) {
                         echo '<img src="'.base_url().'/Thumbnails/'.$myVideo->Photo.'" class="w-13 h-12 my-1  rounded-full " alt="logo">';
                       } else {
@@ -163,7 +176,9 @@
                        ?>
                         <h1 class= "font-bold text-[20px] cursor-pointer"><?= $myVideo->Nom ?> <?= $myVideo->Prenom ?></h1>
                     </div>
-                    <div class="sabonner bg-blue-500 h-[45px] px-[10px] flex justify-center items-center rounded cursor-pointer text-white">
+                    </a>
+                    <div id="<?= $myVideo->User ?>"
+                    class="sabonner bg-blue-400 h-[45px] px-[10px] flex justify-center items-center rounded cursor-pointer text-white">
                         <span>s'abonner</span>
                     </div>
                 </div>
@@ -241,7 +256,12 @@
                       <div class="descriptionV flex flex-col  space-y-1 pl-2 lg:p-3 lg:h-[100%] h-[20%] w-full bg-gray-100 lg:w-[60%] lg:rounded">
                           <div class="videoName font-semibold lg:text-[20px] text-[18px]"><?= substr($video->Title,0,16) ?></div>
                           <div class="profilChannel  flex justify-start items-center space-x-2  cursor-pointer ">
-                              <img src="<?= base_url() ?>/Thumbnails/<?= $video->Photo ?>" class="lg:w-6 w-8 lg:h-6 h-8 my-1   rounded-full " alt="logo">
+                          <?php  if ($video->Photo) {
+                              echo '<img src="'.base_url().'/Thumbnails/'.$video->Photo.'" class="lg:w-6 w-8 lg:h-6 h-8 my-1 rounded-full " alt="logo">';
+                            } else {
+                              echo '<img src="'.base_url().'/img/logo.png" class="lg:w-6 w-8 lg:h-6 h-8 my-1 rounded-full " alt="logo">';
+                            }
+                          ?>
                               <h1 class= "font-semibold text-[15px] cursor-pointer"><?= $video->Nom ?> <?= $video->Prenom ?></h1>
                           </div>
                       </div>
@@ -253,7 +273,7 @@
             </aside>
         </div>
         </div>
-      <script id="script" src="<?= base_url() ?>/player.js"></script>
+      <script id="script" src="<?= base_url() ?>/assets/js/player.js"></script>
       <script type="text/javascript">
         $(document).ready(function(){
           //handle get user's comment on video 
@@ -337,7 +357,52 @@
               }
             })
           }
-          });
+          //s'abonner handle click
+          $('.sabonner').on('click', function (e) {
+            e.preventDefault()
+            var user = $(this).attr('id');
+            $.ajax({
+              method: "post",
+              url: "<?= base_url()?>/abonne",
+              data: {user:user},
+              success: function (response) {
+                console.log(response.message)
+                if(response.message == 0){
+                  $('.sabonner').removeClass('bg-blue-800');
+                  $('.sabonner').addClass('bg-blue-400');
+                  $('.sabonner').text('S\'abonner');
+                }else{
+                  $('.sabonner').text('abonné');
+                  $('.sabonner').removeClass('bg-blue-400');
+                  $('.sabonner').addClass('bg-blue-800');
+                }
+              }
+            }); 
+          })
+          // s'abonner check 
+          abonneCheck()
+            function abonneCheck(){
+            var user = $('.sabonner').attr('id');
+            $.ajax({
+              method: "post",
+              url: "<?= base_url()?>/subscribe",
+              data: {user:user},
+              success: function (response) {
+                if(response.message == 0){
+                  $('.sabonner').removeClass('bg-blue-800');
+                  $('.sabonner').removeClass('bg-blue-400');
+                  $('.sabonner').addClass('bg-blue-400');
+                  $('.sabonner').text('S\'abonner');
+                }else{
+                  $('.sabonner').text('abonné');
+                  $('.sabonner').removeClass('bg-blue-400');
+                  $('.sabonner').removeClass('bg-blue-800');
+                  $('.sabonner').addClass('bg-blue-800');
+                }
+              }
+            }); 
+            }
+          })
     </script>
    </body>
 </html>

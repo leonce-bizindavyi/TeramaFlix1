@@ -14,11 +14,26 @@
                             <div class="videocontainer ">
                                     <div class="imag  h-[170px] rounded  overflow-hidden">
                                     <a href="<?= base_url() ?>/Watch?v=<?=$myVideo->ID?>">
-                                        <img src="<?= base_url() ?>/Thumbnails/<?=$myVideo->Image?>" class="  h-[100%] object-cover">
+                                        <img src="<?= base_url() ?>/Thumbnails/<?=$myVideo->Image?>" class="w-full img-fluid  h-[100%] object-cover">
                                     </a>
                                 </div>
-                                <h10 class="text-xl  font-medium "><?= substr($myVideo->Title, 0, 20) .'... '?></h10><br>
-                                <span class="text-[13px]"><?= $myVideo->Nom?> <?= $myVideo->Prenom?></span>
+                                <a href="<?= base_url()?>/Profile?channel=<?= $myVideo->User ?>">
+                                    <div class="flex  justify-start mb-4">
+                                        <?php 
+                                        if($myVideo->Photo){
+                                            echo '<img class="lg:w-10 w-12 lg:h-10 h-8 my-1 ml-15 rounded-full " src="'.base_url().'/Thumbnails/'.$myVideo->Photo.'">';
+                                        }else{
+                                            echo '<img class="lg:w-10 w-12 lg:h-10 h-8 my-1 ml-15 rounded-full " src="'.base_url().'/img/logo.png">';
+                                        }
+                                        ?>
+                                    <div class="flex flex-col  space-y-2">
+                                        <div class="right-1">
+                                            <h10 class="text-sm font-medium"><?= substr($myVideo->Title, 0, 20) ?></h10><br>
+                                            <span class="text-sm"><?= $myVideo->Nom?> <?= $myVideo->Prenom?></span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </a>
                             </div>
                           </div>
                             <?php
@@ -42,8 +57,23 @@
                         <img src="<?= base_url()?>/Thumbnails/<?=$video->Image?>" class="w-[100%]  h-[100%] object-cover" alt="">
                         </a>
                     </div>
-                    <h10 class="text-xl  font-medium "><?= substr($video->Title, 0, 20) ?></h10><br>
-                    <span class="text-base"><?= $video->Nom?> <?= $video->Prenom?></span>
+                    <a href="<?= base_url()?>/Profile?channel=<?= $video->User ?>">
+                        <div class="flex  justify-start mb-4">
+                            <?php 
+                            if($video->Photo){
+                                echo '<img class="lg:w-10 w-12 lg:h-10 h-8 my-1 ml-15 rounded-full " src="'.base_url().'/Thumbnails/'.$video->Photo.'">';
+                            }else{
+                                echo '<img class="lg:w-10 w-12 lg:h-10 h-8 my-1 ml-15 rounded-full " src="'.base_url().'/img/logo.png">';
+                            }
+                            ?>
+                        <div class="flex flex-col  space-y-2">
+                            <div class="right-1">
+                                <h10 class="text-sm font-medium"><?= substr($video->Title, 0, 20) ?></h10><br>
+                                <span class="text-sm"><?= $video->Nom?> <?= $video->Prenom?></span>
+                            </div>
+                        </div>
+                        </div>
+                    </a>
                 </div>
                 <?php
                 }
@@ -51,9 +81,10 @@
                 </div>
             </div>
         </div>
+    
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             
         </script>
